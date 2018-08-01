@@ -2,17 +2,10 @@
 /**
  * Import/Export from Shell
  *
- * @category Popov
- * @package Popov_Shell
- * @author Serhii Popov <popow.serhii@gmail.com>
- * @datetime: 10.04.14 12:20
- * @link http://blog.variux.com/?p=124
- * @link http://magento.stackexchange.com/a/45671
- * @link http://phpmysqltalk.com/1718-magento-dataflow-exportimport-form-the-command-line.html
  */
 /**
  * Import/Export Script to run Import/Export profile
- * from command line or cron. Cleans entries from dataflow_batch_(import|export) table
+ * from command line or cron. 
  */
 require_once 'abstract.php';
 
@@ -46,34 +39,7 @@ class Mage_Shell_Export extends Mage_Shell_Abstract {
 
 			$batchModel = Mage::getSingleton('dataflow/batch');
 			$this->log('Export Complete. ProfileID: ' . $profileId . '. BatchID: ' . $batchModel->getId());
-			
-			/** Connect to Magento database */
-			sleep(30);
-
-			$config  = Mage::getConfig()->getResourceConnectionConfig('default_setup');
-			$db['host'] = $config->host;
-			$db['name'] = $config->dbname;
-			$db['user'] = $config->username;
-			$db['pass'] = $config->password;
-			$db['pref'] = $config->table_prefix;
-
-			/** @todo Use Magento workflow */
-			mysql_connect($db['host'], $db['user'], $db['pass']) or die(mysql_error());
-			mysql_select_db($db['name']) or die(mysql_error());
-
-			/**
-			 * Truncate dataflow_batch_(import|export) table for housecleaning
-			 *
-			 * Post run housekeeping table bloat removal
-			 * imports use "dataflow_batch_import" table
-			 * exports use "dataflow_batch_export" table
-			 */
-			$table = 'dataflow_batch_export';
-			$queryString = 'TRUNCATE ' . $db['pref'] . $table;
-
-			mysql_query($queryString) or die(mysql_error());
 		
-			$this->log('Completed!');
 		} else {
 			echo $this->usageHelp();
 		}
